@@ -1,25 +1,25 @@
-## Rethink｜R{轮次}　v{当前} → 候选 v{下一版}
+## Rethink | R{round}  v{current} → candidate v{next}
 
-**本轮评分**：{x}/8（未通过：{编号}）
+**Round score**: {x}/8 (failed: {IDs})
 
-**发现**
-- 有效：{…}
-- 浪费：{…}
-- 错误假设 / 遗漏：{…}
+**Findings**
+- Worked: {…}
+- Wasted: {…}
+- Wrong assumptions / omissions: {…}
 
-**经验**：当 {X} 时，做 {Y}
+**Lesson**: when {X}, do {Y}
 
 **Patch**
-| 目标 | 问题（证据） | 改动 | 预期收益 | 副作用 |
+| Target | Problem (evidence) | Change | Expected gain | Side effects |
 |---|---|---|---|---|
 | | | | | |
 
-**评估方式**：考题库重跑 / 外部复核 / 跳过
-**评估结果**：当前 {a} → 候选 {b}；退化项：{无 / …}
-{外部复核：采纳 x 条，部分采纳 y 条，不采纳 z 条（理由）}
+**Evaluation method**: question bank / external review / skipped
+**Result**: current {a} → candidate {b}; regressions: {none / …}
+{External review: accepted x, partly accepted y, rejected z (reasons)}
 
-**结论**：保留 / 不保留 / 不确定
+**Verdict**: keep / discard / inconclusive
 
 ---
-{保留：升级提案见上方卡片，确认后生效。}
-下一轮 R{轮次+1} 使用 v{版本} 开始。
+{On keep: the upgrade proposal is in the card above and takes effect once you confirm.}
+Next round R{round+1} starts with v{version}.

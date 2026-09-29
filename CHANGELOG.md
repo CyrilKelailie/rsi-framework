@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.3 — 2026-09-29
+- English edition of all skill files, templates, script output and docs
+- Replies follow the user's language
+- Script tags renamed: fact / assumption / unknown / inference / preference
+- Chinese README kept as README.zh-CN.md; install path corrected to claude.ai/customize/skills
+
 ## v2.2 — 2026-09-29
 - 取消固定考卷：考题库放入 rsi SKILL.md 第 7 节，每次 /rethink 由用户选择是否收入本轮任务
 - /rethink 评估改为三选一：考题库重跑 / 外部复核 / 跳过（跳过只能判"不确定"）

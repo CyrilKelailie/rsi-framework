@@ -1,14 +1,14 @@
-# 评分标准（锁死，只有用户明确要求时才改）
+# Scoring rubric (locked; change only when the user explicitly asks)
 
-/rethink 用来评价一轮 /rsi。每条 0 / 1 分，满分 8。候选版本在考题库或外部复核中的总分不得低于当前版本。
+Used by /rethink to evaluate a /rsi round. Each item 0 / 1, max 8. A candidate version must not score lower than the current version on the question bank or in external review.
 
-| # | 标准 | 通过条件 |
+| # | Criterion | Passes when |
 |---|---|---|
-| 1 | 可执行 | 解决方案有执行顺序、验证方法和完成标准 |
-| 2 | 可追溯 | 结论都有来源编号（`rsi_state.py check` 通过） |
-| 3 | 真反驳 | 反驳改变了至少一个方案的评级、分数或内容 |
-| 4 | 不漂移 | 最终方案直接回答任务定义 |
-| 5 | 有真实案例 | 可行方案有带链接的真实案例，或写明"无先例" |
-| 6 | 证据够 | 解决方案依赖的关键结论证据等级 ≥ L2 |
-| 7 | 中立 | 用户提议的方案受同等反驳；至少一个方案不采用用户提议；偏好未改动评分 |
-| 8 | 问得对 | 会改变结果的歧义或缺口都当场用选择题问了；不影响结论的小问题没问 |
+| 1 | Actionable | The Solution has an execution order, a verification method and a done condition |
+| 2 | Traceable | Every conclusion cites source IDs (`rsi_state.py check` passes) |
+| 3 | Real rebuttal | Rebuttal changed at least one plan's rating, score or content |
+| 4 | No drift | The final plan directly answers the task definition |
+| 5 | Real examples | Feasible plans have real cases with links, or state "no precedent" |
+| 6 | Enough evidence | Key conclusions the Solution relies on are at least L2 |
+| 7 | Neutral | The user's proposal was rebutted equally; at least one plan did not use it; preferences did not change scores |
+| 8 | Asked well | Every ambiguity or gap that would change the result was asked on the spot; nothing trivial was asked |

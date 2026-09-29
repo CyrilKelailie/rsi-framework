@@ -1,39 +1,39 @@
-# 运行示例（v2.0，只展示用户可见的五个输出）
+# Example run (only the five user-visible outputs)
 
-**用户**：`/rsi 我想靠参加展会，让家里箱包厂找到新的欧洲买家`
+**User**: `/rsi I want to find new European buyers for our bag factory by exhibiting at trade fairs`
 
-> "参加展会"是用户提议，只占 Plan A；B、C 必须是不同机制的独立方案。
+> "Trade fairs" is the user's proposal, so it occupies only Plan A; B and C must be independent plans with different mechanisms.
 
-## ① 汇总 1｜R1
-**任务定义**：在不依赖老客户的前提下，为 OEM 箱包厂建立稳定的新欧洲买家来源。
+## ① Summary 1 | R1
+**Task definition**: Build a stable source of new European buyers for an OEM bag factory, without relying on existing customers.
 
-| 分支 | 内容 | 标签 |
+| Branch | Content | Tag |
 |---|---|---|
-| 目的 [G1] | 表面"多找买家" → 真实意图：降低对少数老客户的依赖 | 推断 |
-| 第一性原理 [F1] | 买家要稳定品质、准时交付、合理价格；买家也在主动找工厂。站不住的假设："新客户只能靠展会" | 事实 / 推断 |
-| 限制 [L1] | 无自有品牌；首年预算有限 | 事实 / 假设 |
-| 成功标准 [S1] | 12 个月内新渠道订单占比 20% | 事实 |
-| 可用资源 [R1] | 出口资质；负责人常驻英国 | 事实 |
+| Purpose [G1] | Stated: "find more buyers" → real intent: reduce dependence on a few long-standing customers | inference |
+| First principles [F1] | Buyers want consistent quality, on-time delivery, fair prices; buyers also actively search for factories. Assumption that fails: "new customers only come from trade fairs" | fact / inference |
+| Constraints [L1] | No own brand; limited first-year budget | fact / assumption |
+| Success criteria [S1] | New channels deliver 20% of orders within 12 months | fact |
+| Resources [R1] | Export certifications; the owner will be based in the UK | fact |
 
-## ② 汇总 2｜R1
-| 方案 | 一句话描述 | 评分 | 可行性 | 最强反驳 | 证据 |
+## ② Summary 2 | R1
+| Plan | One-line description | Score | Feasibility | Strongest rebuttal | Evidence |
 |---|---|---|---|---|---|
-| A（用户提议） | 参加欧洲展会，靠现场接触成交 | 15/25 | 有条件 | 单次成本高，转化周期长 | L3 |
-| B | 独立站展示案例，靠被搜到获询盘 | 16/25 | 有条件 | 见效慢 | L3 |
-| C | 常驻英国拜访经销商，靠信任成交 | 18/25 | 可行 | 覆盖面窄 | L2 |
+| A (user proposal) | Exhibit at European fairs; win through face-to-face contact | 15/25 | conditional | High cost per event, long conversion cycle | L3 |
+| B | Website with case studies; win by being found in search | 16/25 | conditional | Slow to show results | L3 |
+| C | Visit UK distributors in person; win through trust | 18/25 | feasible | Narrow reach | L2 |
 
-**反驳推翻了什么**：A 从"可行"降为"有条件"。**更简单的做法**：先用 C 拜访 10 家验证需求，再决定是否投展会。
+**What the rebuttal overturned**: A downgraded from feasible to conditional. **Simpler approach**: visit 10 distributors first (C) to validate demand before paying for a fair.
 
-## ③ 实际例子｜R1
-**E1｜{真实公司}（{规模}）→ 方案 C** … 来源：[{标题}]({链接})
-> 示例用占位符；实际运行必须联网查证。
+## ③ Real-world examples | R1
+**E1 | {real company} ({scale}) → Plan C** … Source: [{title}]({link})
+> Placeholders in this example; a real run must verify cases online.
 
-## ④ 综合｜R1
-**决策变量**：能否接受 6 个月以上才见效。能 → B 长期更便宜；不能 → C 最快验证。
-**推荐**：C（18/25），依据 F1、E1
+## ④ Synthesis | R1
+**Decision variable**: can you accept 6+ months before results? Yes → B is cheaper long term; no → C validates fastest.
+**Recommendation**: C (18/25), based on F1, E1
 
-*（决策点选择题 → 用户选 C）*
+*(decision-point question → user picks C)*
 
-## ⑤ 解决方案｜R1
-执行顺序、所需资源、风险控制、验证方法、完成标准……
-本轮结束。输入 /rethink 可复盘并开启下一轮。
+## ⑤ Solution | R1
+Execution order, resources, risk control, verification, done condition…
+Round complete. Type /rethink to review and start the next round.

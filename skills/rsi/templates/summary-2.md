@@ -1,35 +1,35 @@
-## ② 汇总 2｜R{轮次}
+## ② Summary 2 | R{round}
 
-**任务定义**：{照抄汇总 1}
+**Task definition**: {copied from Summary 1}
 
-| 方案 | 一句话描述 | 评分 | 可行性 | 最强反驳 | 证据 |
+| Plan | One-line description | Score | Feasibility | Strongest rebuttal | Evidence |
 |---|---|---|---|---|---|
-| A | {做什么 + 靠什么赢} | {x}/25 | 可行 / 有条件 / 不可行 | {A-X1} | L{n} |
+| A | {what it does + why it wins} | {x}/25 | feasible / conditional / infeasible | {A-X1} | L{n} |
 | B | | | | | |
 | C | | | | | |
 
-**评分明细**（契合·落地·成本·速度·抗风险）
-- A：{4·4·3·3·4}，成立条件：{…}
-- B：…
-- C：…
+**Score breakdown** (fit · feasibility · cost · speed · resilience)
+- A: {4·4·3·3·4}, holds if: {…}
+- B: …
+- C: …
 
-**反驳推翻了什么**：{被降级或否定的判断，附编号；无则写"无"}
-**更简单的做法**：{反驳中发现的更简单路径；无则写"未发现"}
-{方案少于 3 个时说明原因；来自用户提议的方案标注"（用户提议）"}
-
----
-
-## ③ 实际例子｜R{轮次}
-
-**E1｜{谁}（{规模}）→ 方案 A**
-- 做了什么：{自己的话概括}
-- 结果：{数字或定性结果}
-- 可借鉴：{…}　不适用：{…}
-- 来源：[{标题}]({链接})
-
-**E2｜…**
-
-{无案例的方案："方案 X：无先例（已搜索 …）"}
+**What the rebuttal overturned**: {downgraded or rejected judgments, with IDs; "none" if none}
+**Simpler approach**: {a simpler path found during rebuttal; "none found" if none}
+{If fewer than 3 plans, explain why. Mark a plan proposed by the user as "(user proposal)".}
 
 ---
-不满意可输入 /retry 2 重算。
+
+## ③ Real-world examples | R{round}
+
+**E1 | {who} ({scale}) → Plan A**
+- What they did: {summary in your own words}
+- Result: {figures or qualitative result}
+- Transfers: {…}  Does not transfer: {…}
+- Source: [{title}]({link})
+
+**E2 | …**
+
+{Plans without cases: "Plan X: no precedent (searched: …)"}
+
+---
+Not satisfied? Type /retry 2 to recompute.

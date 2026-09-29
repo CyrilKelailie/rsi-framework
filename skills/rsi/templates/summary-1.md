@@ -1,16 +1,16 @@
-## ① 汇总 1｜R{轮次}
+## ① Summary 1 | R{round}
 
-**任务定义**：{1–3 句，重新描述真正要解决的问题；之后每层照抄，不得改写}
+**Task definition**: {1–3 sentences restating the real problem; copied verbatim at every later step, never rewritten}
 
-| 分支 | 内容 | 标签 |
+| Branch | Content | Tag |
 |---|---|---|
-| 目的 [G] | {表面诉求 → 真实意图} | |
-| 第一性原理 [F] | {基本事实 2–4 条；站不住的惯常假设} | 事实 / 推断 |
-| 限制 [L] | {硬约束} | |
-| 成功标准 [S] | {做到 X 即完成} | |
-| 可用资源 [R] | {确实可用的} | |
+| Purpose [G] | {stated request → real intent} | |
+| First principles [F] | {2–4 irreducible facts; the conventional assumption that does not hold} | fact / inference |
+| Constraints [L] | {hard constraints} | |
+| Success criteria [S] | {done when X} | |
+| Resources [R] | {what is actually available} | |
 
-**关键未知**：{会改变方案的未知项；已采用的假设写"假设：…"}
+**Key unknowns**: {unknowns that would change the plan; assumptions adopted are written "Assumption: …"}
 
 ---
-不满意可输入 /retry 1 重算。
+Not satisfied? Type /retry 1 to recompute.

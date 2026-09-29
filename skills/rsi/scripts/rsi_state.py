@@ -1,20 +1,21 @@
 #!/usr/bin/env python3
-"""RSI 状态机 v2.0：记录思考树，校验可追溯性、证据等级与中立性，生成交接说明。
+"""RSI state machine v2.3: records the reasoning tree, checks traceability,
+evidence levels and neutrality, and produces handoff / external review packets.
 
-状态文件：.rsi_state.json（当前目录；可用 RSI_STATE 环境变量改路径）
+State file: .rsi_state.json in the current directory (override with RSI_STATE).
 
-  init "<任务定义>" [--success "<成功标准>"]
-  add <编号> <类型> "<内容>" [选项]
-      类型：branch plan rebuttal example summary synthesis solution
-      --parent 编号      --sources A,A-X1,E1
-      --tag 事实|假设|未知|推断|偏好
-      --level L0-L4     证据等级
-      --score 5,4,3,3,4 plan 评分：契合,落地,成本,速度,抗风险
-      --url https://…   example 必填
-      --user            标记为用户提议的方案
-  retry <汇总编号> "<原因>"
+  init "<task definition>" [--success "<success criteria>"]
+  add <id> <type> "<content>" [options]
+      types: branch plan rebuttal example summary synthesis solution
+      --parent ID        --sources A,A-X1,E1
+      --tag fact|assumption|unknown|inference|preference
+      --level L0-L4      evidence level
+      --score 5,4,3,3,4  plan score: fit,feasibility,cost,speed,resilience
+      --url https://...  required for examples
+      --user             marks a plan proposed by the user
+  retry <summary id> "<reason>"
   round | status | handoff | check
-  export [--patch "<候选改动摘要>"]   生成给其他 AI 的外部复核包
+  export [--patch "<candidate change summary>"]   external review packet for another AI
 """
 import argparse
 import json
@@ -24,7 +25,7 @@ from datetime import datetime
 
 STATE = os.environ.get("RSI_STATE", ".rsi_state.json")
 TYPES = {"branch", "plan", "rebuttal", "example", "summary", "synthesis", "solution"}
-TAGS = {"事实", "假设", "未知", "推断", "偏好"}
+TAGS = {"fact", "assumption", "unknown", "inference", "preference"}
 LEVELS = {"L0", "L1", "L2", "L3", "L4"}
 MAX_DEPTH, MAX_RETRY = 3, 3
 
@@ -35,7 +36,7 @@ def now():
 
 def load():
     if not os.path.exists(STATE):
-        sys.exit("未找到状态文件，请先运行 init")
+        sys.exit("No state file found. Run init first.")
     with open(STATE, encoding="utf-8") as f:
         return json.load(f)
 
@@ -56,20 +57,20 @@ def of(r, t):
 def cmd_init(a):
     save({"task": a.task, "success": a.success or "", "created": now(),
           "rounds": [{"round": 1, "nodes": {}, "retries": [], "started": now()}]})
-    print(f"[R1] 任务定义已锁定：{a.task}")
+    print(f"[R1] Task definition locked: {a.task}")
 
 
 def cmd_add(a):
     if a.type not in TYPES:
-        sys.exit(f"类型必须是：{' '.join(sorted(TYPES))}")
+        sys.exit(f"type must be one of: {' '.join(sorted(TYPES))}")
     if a.tag and a.tag not in TAGS:
-        sys.exit(f"--tag 必须是：{' '.join(TAGS)}")
+        sys.exit(f"--tag must be one of: {' '.join(sorted(TAGS))}")
     if a.level and a.level not in LEVELS:
-        sys.exit("--level 必须是 L0-L4")
+        sys.exit("--level must be L0-L4")
     if a.id.count(".") + 1 > MAX_DEPTH:
-        sys.exit(f"{a.id} 超过最大嵌套 {MAX_DEPTH} 层，请回流")
+        sys.exit(f"{a.id} exceeds max nesting depth {MAX_DEPTH}; fold it back up")
     if a.type == "example" and not (a.url or "").startswith("http"):
-        sys.exit("实际例子必须带来源链接：--url https://...")
+        sys.exit("Examples need a source link: --url https://...")
     score = []
     if a.score:
         try:
@@ -77,15 +78,15 @@ def cmd_add(a):
         except ValueError:
             score = []
         if len(score) != 5 or not all(1 <= x <= 5 for x in score):
-            sys.exit("--score 必须是 5 个 1-5 的整数：契合,落地,成本,速度,抗风险")
+            sys.exit("--score must be five integers 1-5: fit,feasibility,cost,speed,resilience")
     s = load()
     r = cur(s)
     if a.parent and a.parent not in r["nodes"]:
-        sys.exit(f"父节点 {a.parent} 不存在")
+        sys.exit(f"Parent {a.parent} does not exist")
     sources = [x for x in (a.sources or "").split(",") if x]
     missing = [x for x in sources if x not in r["nodes"]]
     if missing:
-        sys.exit(f"来源不存在：{', '.join(missing)}")
+        sys.exit(f"Unknown sources: {', '.join(missing)}")
     old = r["nodes"].get(a.id)
     r["nodes"][a.id] = {
         "type": a.type, "content": a.content, "parent": a.parent, "sources": sources,
@@ -103,9 +104,9 @@ def cmd_retry(a):
     n = sum(1 for x in r["retries"] if x["target"] == a.target) + 1
     r["retries"].append({"target": a.target, "reason": a.reason, "n": n, "time": now()})
     save(s)
-    print(f"[R{r['round']}] {a.target} 第 {n} 次 retry：{a.reason}")
+    print(f"[R{r['round']}] {a.target} retry #{n}: {a.reason}")
     if n > MAX_RETRY:
-        print("⚠️ 超过 3 次，建议 /retry 1 重新定义问题")
+        print("⚠️ More than 3 retries; suggest /retry 1 to redefine the problem")
 
 
 def cmd_round(_):
@@ -113,95 +114,97 @@ def cmd_round(_):
     n = cur(s)["round"] + 1
     s["rounds"].append({"round": n, "nodes": {}, "retries": [], "started": now()})
     save(s)
-    print(f"[R{n}] 新一轮开始，任务定义不变：{s['task']}")
+    print(f"[R{n}] New round started; task definition unchanged: {s['task']}")
 
 
 def cmd_status(_):
     s = load()
     r = cur(s)
-    print(f"任务：{s['task']}\n轮次 R{r['round']}　节点 {len(r['nodes'])}　retry {len(r['retries'])}")
+    print(f"Task: {s['task']}\nRound R{r['round']}  nodes {len(r['nodes'])}  retries {len(r['retries'])}")
     for k, v in r["nodes"].items():
         meta = " ".join(x for x in [v["tag"], v["level"],
                                      f"{sum(v['score'])}/25" if v["score"] else "",
-                                     "用户提议" if v["user"] else ""] if x)
-        src = f" ← {','.join(v['sources'])}" if v["sources"] else ""
-        print(f"{'  ' * k.count('.')}- {k} [{v['type']}] {v['content'][:50]}{src}  {meta}")
+                                     "user proposal" if v["user"] else ""] if x)
+        src = f" <- {','.join(v['sources'])}" if v["sources"] else ""
+        print(f"{'  ' * k.count('.')}- {k} [{v['type']}] {v['content'][:60]}{src}  {meta}")
 
 
 def cmd_handoff(_):
     s = load()
     r = cur(s)
-    print(f"# 交接说明 R{r['round']}\n\n**任务定义**：{s['task']}")
+    print(f"# Handoff R{r['round']}\n\n**Task definition**: {s['task']}")
     if s["success"]:
-        print(f"**成功标准**：{s['success']}")
-    for t, title in [("summary", "汇总"), ("synthesis", "综合"), ("solution", "解决方案")]:
+        print(f"**Success criteria**: {s['success']}")
+    for t, title in [("summary", "Summaries"), ("synthesis", "Synthesis"), ("solution", "Solution")]:
         items = of(r, t)
         if items:
             print(f"\n## {title}")
             for k, v in items:
-                print(f"- {k}：{v['content']}")
+                print(f"- {k}: {v['content']}")
     plans = sorted(of(r, "plan"), key=lambda kv: -sum(kv[1]["score"] or [0]))
     if plans:
-        print("\n## 方案评分")
+        print("\n## Plan scores")
         for k, v in plans:
             sc = v["score"]
-            print(f"- {k}{'（用户提议）' if v['user'] else ''}：{v['content']}｜"
-                  f"{sum(sc)}/25（{'·'.join(map(str, sc)) if sc else '未评分'}）")
-    for t, title in [("rebuttal", "反驳"), ("example", "实际例子")]:
+            print(f"- {k}{' (user proposal)' if v['user'] else ''}: {v['content']} | "
+                  f"{sum(sc)}/25 ({'·'.join(map(str, sc)) if sc else 'unscored'})")
+    for t, title in [("rebuttal", "Rebuttals"), ("example", "Real-world examples")]:
         items = of(r, t)
         if items:
             print(f"\n## {title}")
             for k, v in items:
-                print(f"- {k}：{v['content']}" + (f"（{v['url']}）" if v["url"] else ""))
+                print(f"- {k}: {v['content']}" + (f" ({v['url']})" if v["url"] else ""))
     if r["retries"]:
-        print("\n## retry 记录")
+        print("\n## Retry log")
         for x in r["retries"]:
-            print(f"- {x['target']} 第{x['n']}次：{x['reason']}")
+            print(f"- {x['target']} #{x['n']}: {x['reason']}")
 
 
-REVIEW_PROMPT = """你是独立审稿人。下面是另一个 AI 按固定框架得出的方案。请只根据材料和你能查证的事实做检查，不要迎合任何一方。
+REVIEW_PROMPT = """You are an independent reviewer. Below is a plan another AI produced using a fixed framework. Check it using only this material and facts you can verify. Do not try to please either side.
 
-请逐项回答，每项给结论（成立 / 存疑 / 不成立）和一句理由：
-1. 解决方案是否真正回答了任务定义？
-2. 关键结论的证据是否足够？有没有把假设当成事实？
-3. 被放弃的方案里，有没有其实更好的？
-4. 实际例子是否真实、是否支持对应结论？（能查证就查证链接）
-5. 有没有明显遗漏的风险、成本或更简单的做法？
-6. 如果附有"候选改动"：这些改动会让框架更好、更差，还是无影响？
-最后用一句话给出总体判断。"""
+Answer each item with a verdict (holds / doubtful / does not hold) and one sentence of reasoning:
+1. Does the solution actually answer the task definition?
+2. Is the evidence for key conclusions sufficient? Is any assumption treated as fact?
+3. Among the rejected plans, is any actually better?
+4. Are the real-world examples genuine, and do they support their conclusions? (Check the links if you can.)
+5. Are there obvious missing risks, costs, or a simpler approach?
+6. If a "candidate change" is attached: would it make the framework better, worse, or no different?
+Finish with a one-sentence overall judgment.
+Please answer in the same language as the task definition."""
 
 
 def cmd_export(a):
     s = load()
     r = cur(s)
     nodes = r["nodes"]
-    print("===== 外部复核包：请整段复制给其他 AI =====\n")
+    print("===== External review packet: copy everything below into another AI =====\n")
     print(REVIEW_PROMPT)
-    print(f"\n---\n\n**任务定义**：{s['task']}")
+    print(f"\n---\n\n**Task definition**: {s['task']}")
     if s["success"]:
-        print(f"**成功标准**：{s['success']}")
-    for t, title in [("summary", "汇总"), ("synthesis", "综合"), ("solution", "解决方案")]:
+        print(f"**Success criteria**: {s['success']}")
+    for t, title in [("summary", "Summary"), ("synthesis", "Synthesis"), ("solution", "Solution")]:
         for k, v in of(r, t):
-            print(f"\n**{title} {k}**：{v['content']}")
+            print(f"\n**{title} {k}**: {v['content']}")
     plans = sorted(of(r, "plan"), key=lambda kv: -sum(kv[1]["score"] or [0]))
     if plans:
-        print("\n**候选方案**")
+        print("\n**Candidate plans**")
         for k, v in plans:
-            reb = [n["content"] for kk, n in nodes.items() if n["type"] == "rebuttal" and kk.split("-X")[0] == k]
-            print(f"- {k}：{v['content']}｜{sum(v['score'] or [0])}/25｜反驳：{'；'.join(reb) or '无'}")
+            reb = [n["content"] for kk, n in nodes.items()
+                   if n["type"] == "rebuttal" and kk.split("-X")[0] == k]
+            print(f"- {k}: {v['content']} | {sum(v['score'] or [0])}/25 | rebuttal: {'; '.join(reb) or 'none'}")
     claims = [(k, v) for k, v in nodes.items() if v["level"] or v["tag"]]
     if claims:
-        print("\n**关键结论（标签 / 证据等级）**")
+        print("\n**Key conclusions (tag / evidence level)**")
         for k, v in claims:
-            print(f"- {k}：{v['content']}（{v['tag'] or '-'} / {v['level'] or '-'}）")
+            print(f"- {k}: {v['content']} ({v['tag'] or '-'} / {v['level'] or '-'})")
     ex = of(r, "example")
     if ex:
-        print("\n**实际例子**")
+        print("\n**Real-world examples**")
         for k, v in ex:
-            print(f"- {k}：{v['content']}　{v['url']}")
+            print(f"- {k}: {v['content']}  {v['url']}")
     if a.patch:
-        print(f"\n**候选改动**：{a.patch}")
-    print("\n===== 复核包结束 =====")
+        print(f"\n**Candidate change**: {a.patch}")
+    print("\n===== End of review packet =====")
 
 
 def cmd_check(_):
@@ -212,34 +215,34 @@ def cmd_check(_):
     rebutted = {k.split("-X")[0] for k, v in nodes.items() if v["type"] == "rebuttal"}
     for k, v in nodes.items():
         if v["type"] in {"summary", "synthesis", "solution"} and not v["sources"]:
-            p.append(f"{k} 没有来源编号")
+            p.append(f"{k} cites no source IDs")
         if v["type"] == "solution":
             weak = [x for x in v["sources"] if nodes[x]["level"] in {"L0", "L1"}]
             if weak:
-                p.append(f"解决方案依赖低证据等级结论：{', '.join(weak)}（需 ≥ L2）")
-            if any(nodes[x]["tag"] == "假设" for x in v["sources"]):
-                p.append("解决方案依赖未验证的假设，需在'未确认的点'中列出")
+                p.append(f"Solution relies on low-evidence conclusions: {', '.join(weak)} (needs >= L2)")
+            if any(nodes[x]["tag"] == "assumption" for x in v["sources"]):
+                p.append("Solution relies on an unverified assumption; list it under 'Unconfirmed points'")
     for k in plans:
         if not nodes[k]["score"]:
-            p.append(f"方案 {k} 没有评分")
+            p.append(f"Plan {k} has no score")
         if k not in rebutted:
-            p.append(f"方案 {k} 没有反驳（所有方案须同等反驳）")
+            p.append(f"Plan {k} has no rebuttal (every plan must be rebutted equally)")
     user_plans = [k for k in plans if nodes[k]["user"]]
     if plans and len(user_plans) == len(plans):
-        p.append("所有方案都来自用户提议，至少需要一个独立方案")
+        p.append("All plans come from the user's proposal; at least one independent plan is required")
     if len(user_plans) > 1:
-        p.append("用户提议最多占一个方案")
+        p.append("The user's proposal may occupy at most one plan")
     if plans and not of(r, "example"):
-        p.append("没有实际例子；确实找不到时应写明'无先例'")
+        p.append("No real-world examples; if none exist, state 'no precedent'")
     for t in {x["target"] for x in r["retries"]}:
         c = sum(1 for x in r["retries"] if x["target"] == t)
         if c > MAX_RETRY:
-            p.append(f"{t} retry {c} 次，建议重新定义问题")
-    print("✅ 检查通过" if not p else "\n".join("⚠️ " + x for x in p))
+            p.append(f"{t} retried {c} times; suggest redefining the problem")
+    print("✅ Check passed" if not p else "\n".join("⚠️ " + x for x in p))
 
 
 def main():
-    ap = argparse.ArgumentParser(description="RSI 状态机")
+    ap = argparse.ArgumentParser(description="RSI state machine")
     sub = ap.add_subparsers(dest="cmd", required=True)
     x = sub.add_parser("init"); x.add_argument("task"); x.add_argument("--success")
     x = sub.add_parser("add")

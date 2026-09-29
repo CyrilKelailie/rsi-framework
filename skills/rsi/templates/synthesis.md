@@ -1,17 +1,17 @@
-## ④ 综合｜R{轮次}
+## ④ Synthesis | R{round}
 
-> 综合必须产生新信息：不重复三个方案，而是指出真正决定选择的东西。
+> The synthesis must add new information: do not repeat the three plans; identify what actually decides the choice.
 
-**最关键的事实**：{2–3 条，附编号和证据等级}
+**Most important facts**: {2–3 items, with IDs and evidence levels}
 
-**真正的决策变量**：{选哪个方案取决于什么，如"能否接受 6 个月才见效"}
+**The real decision variables**: {what the choice depends on, e.g. "can you accept 6+ months before results?"}
 
-**各路线适合的情况**
-- A 适合：{…}
-- B 适合：{…}
+**When each route fits**
+- A fits when: {…}
+- B fits when: {…}
 
-**推荐**：{方案}（{分数}），依据 {编号}
-**最大不确定性**：{…}，可通过 {行动} 消除
+**Recommendation**: {plan} ({score}), based on {IDs}
+**Biggest uncertainty**: {…}, resolvable by {action}
 
 ---
-不满意可输入 /retry 重算。
+Not satisfied? Type /retry to recompute.

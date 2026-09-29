@@ -1,53 +1,53 @@
-# 复盘方法
+# Review method
 
-## §1 复盘清单
+## §1 Review checklist
 
-- 哪一步带来最大收益？哪一步浪费了资源？
-- 有没有重复思考、被推翻的假设、遗漏的现实约束？
-- 反驳是否攻击了最强版本？对用户提议的方案是否同等力度？
-- 验证等级够不够？有没有把 L0/L1 写成结论？
-- 是否问了不必要的问题？
-- /retry 发生在哪、为什么？（权重最高的证据之一）
+- Which step produced the most value? Which wasted resources?
+- Any repeated thinking, overturned assumptions, missed real-world constraints?
+- Did the rebuttal attack the strongest version? Was the user's proposal rebutted with equal force?
+- Was the evidence level high enough? Was any L0/L1 written as a conclusion?
+- Were unnecessary questions asked, or necessary ones skipped?
+- Where did /retry happen, and why? (one of the highest-weight signals)
 
-证据权重：用户纠正 > /retry 原因 > 反驳推翻 > 评分未通过项 > 流程返工。
+Evidence weight: user correction > /retry reason > overturned by rebuttal > failed rubric item > rework in the flow.
 
-## §2 经验
+## §2 Lessons
 
-| 不合格 | 合格 |
+| Not acceptable | Acceptable |
 |---|---|
-| 以后更仔细 | 当三个方案共享同一核心机制时，不视为三个独立方案 |
-| 多考虑成本 | 当限制中有预算上限时，评分前先估算每个方案的首月成本 |
+| Be more careful | When three plans share the same core mechanism, do not treat them as three independent plans |
+| Consider cost more | When the constraints include a budget cap, estimate each plan's first-month cost before scoring |
 
-- 只在一类任务出现：写入经验库，标注任务类型
-- 在 2 种以上任务类型出现，或用户明确指出是流程问题：才可改流程规则
-- 用户的单次偏好不能写成规则
+- Seen in one task type only: add to the lessons list, tagged with that task type
+- Seen in 2+ task types, or the user explicitly calls it a process problem: only then may a flow rule change
+- A single user preference may never become a rule
 
 ## §3 Patch
 
 ```
 PATCH
-目标：{五分支 / 方案生成 / 反驳 / 验证 / 评分 / 例子 / 提问 / retry / 输出格式 / 经验库}
-问题：{…}
-证据：{编号、retry 记录或用户纠正}
-改动：{具体改哪一行}
-预期收益：{哪条评分标准会变好}
-可能副作用：{…}
-验证方式：{考题库题号，或外部复核}
+Target:        {branches / plan generation / rebuttal / verification / scoring / examples / asking / retry / output format / lessons}
+Problem:       {…}
+Evidence:      {IDs, retry records or user corrections}
+Change:        {exactly which line changes}
+Expected gain: {which rubric item improves}
+Side effects:  {…}
+Validation:    {question-bank items, or external review}
 ```
 
-## §4 评估与防过拟合
+## §4 Evaluation and anti-overfitting
 
-三种方式，由用户选择：
+Three methods; the user chooses:
 
-| 方式 | 做法 | 能给出的结论 |
+| Method | How | Possible verdicts |
 |---|---|---|
-| ① 考题库重跑 | 挑 2–3 道与改动相关的题，当前版与候选版各跑到汇总 2，按评分标准对比 | 保留 / 不保留 / 不确定 |
-| ② 外部复核 | 导出复核包，其他 AI 检查后贴回，逐条核对 | 保留 / 不保留 / 不确定 |
-| ③ 跳过 | 不评估 | 只能是"不确定"，不提交升级 |
+| ① Question bank | Pick 2–3 questions related to the change; run current and candidate up to Summary 2; compare with the rubric | keep / discard / inconclusive |
+| ② External review | Export the review packet; another AI checks it; paste the feedback back and check each point | keep / discard / inconclusive |
+| ③ Skip | No evaluation | inconclusive only; no upgrade submitted |
 
-- 候选总分低于当前，或任何一条从通过变为不通过 → 不保留
-- 同时检查：输出是否更长、提问是否更多、规则是否更复杂——变差也算退化
-- 经验库最多 15 条，新增一条尽量合并或删除一条
-- 每 5 次 /rethink 做一次消融：暂时去掉一条规则跑考题库，没变差就删除
-- 连续 3 次改动朝同一方向（越来越长、越来越保守）→ 暂停并问用户
-- 连续 2 次没有有证据的改动 → 框架已稳定，只记录不升级
+- Candidate total below current, or any item going from pass to fail → discard
+- Also check: longer output, more questions, more complex rules — these count as regressions too
+- Lessons max 15; when adding one, merge or remove one where possible
+- Every 5 /rethinks, run an ablation: temporarily drop one rule and rerun the question bank; if nothing gets worse, delete it
+- 3 consecutive changes in the same direction (longer, more conservative) → pause and ask the user
+- 2 consecutive reviews with no evidence-backed change → the framework is stable; record only, do not upgrade

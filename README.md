@@ -1,71 +1,74 @@
-# RSI Framework v2.2
+# RSI Framework v2.3
 
-> 多分支思考 + 中立验证 + 人工把关的自我升级。两个 Agent Skill，适用于 Claude（claude.ai / Claude Code）。
+> Multi-branch reasoning + neutral verification + human-gated self-improvement. Two Agent Skills for Claude (claude.ai / Claude Code).
+>
+> [中文说明](README.zh-CN.md)
 
-**只有输入 `/rsi` `/retry` `/rethink` 才运行，不是后台常驻流程。**
+**Runs only when you type `/rsi`, `/retry` or `/rethink`. It is never an always-on background process.** Replies follow the user's language.
 
 ```
-/rsi 想法
-  ├─ 五分支（内部）：目的 · 第一性原理 · 限制 · 成功标准 · 可用资源
-  ├─ ① 汇总 1：任务定义
-  ├─ 方案（内部）：Plan A/B/C → divide 拆解 → 钢人反驳 → 验证 → 评分
-  ├─ ② 汇总 2：一句话描述 · 评分 · 最强反驳 · 证据等级
-  ├─ ③ 实际例子：真实案例 + 来源链接
-  ├─ ④ 综合：决策变量，不重复方案
-  ├─ 决策点：选择题确认方向（任何步骤不懂都会当场提问）
-  └─ ⑤ 解决方案：本轮终点，停止
+/rsi <idea>
+  ├─ Five branches (internal): Purpose · First principles · Constraints · Success criteria · Resources
+  ├─ ① Summary 1: task definition
+  ├─ Plans (internal): Plan A/B/C → divide → steelman rebuttal → verification → scoring
+  ├─ ② Summary 2: one-line description · score · strongest rebuttal · evidence level
+  ├─ ③ Real-world examples: real cases + source links
+  ├─ ④ Synthesis: decision variables, not a repeat of the plans
+  ├─ Decision point: multiple-choice (and ask on the spot whenever something is unclear)
+  └─ ⑤ Solution: end of the round, stop
 
-/retry [1|2]   目标不变，路径重算（至少换掉一项：方案/来源/拆法/验证/假设）
-/rethink       复盘方法 → Patch → 评估（考题库 / 外部复核）→ 收题 → 开启下一轮
+/retry [1|2]   Same goal, new path (change at least one: plan / source / decomposition / verification / assumption)
+/rethink       Review the method → Patch → evaluate (question bank / external review) → collect question → next round
 ```
 
-## 中立性（不被用户观点或某个方案带偏）
+## Neutrality (not steered by the user's opinion or any single plan)
 
-1. 用户的想法最多占一个方案，至少一个方案不用它
-2. 成功标准和评分维度在生成方案前固定
-3. 所有方案受同等强度的钢人反驳
-4. 用户陈述分为「事实」和「偏好」；偏好只影响选择，不改分数
-5. 结论强度看证据等级（L0 直觉 → L4 测算），不看是谁提出的
+1. The user's own idea may occupy at most one plan; at least one plan must not use it
+2. Success criteria and scoring dimensions are fixed before plans are generated
+3. Every plan receives an equally strong steelman rebuttal
+4. User statements are split into *fact* and *preference*; preferences affect the choice, never the scores
+5. Strength of a conclusion depends on its evidence level (L0 intuition → L4 computed), not on who proposed it
 
-以上均由 `rsi_state.py check` 自动校验。
+All of the above are checked automatically by `rsi_state.py check`.
 
-## 目录
+## Layout
 
 ```
 skills/
 ├── rsi/
-│   ├── SKILL.md              主流程 · 不变原则 · 经验库 · 考题库
+│   ├── SKILL.md              Flow · invariant principles · lessons · question bank
 │   ├── references/
-│   │   ├── method.md         标签与证据等级 · 五分支 · 方案 · 反驳 · 评分 · 例子
-│   │   └── control.md        提问 · /retry · 停止条件
-│   ├── templates/            ①–⑤ 五个输出模板
-│   ├── scripts/rsi_state.py  状态机：编号、追溯、证据、中立性校验、交接、外部复核包
-│   └── evals/rubric.md       评分标准（锁死）
+│   │   ├── method.md         Tags & evidence levels · branches · plans · rebuttal · scoring · examples
+│   │   └── control.md        Asking · /retry · stop conditions
+│   ├── templates/            The five output templates ①–⑤
+│   ├── scripts/rsi_state.py  State machine: IDs, traceability, evidence, neutrality checks, handoff, review packet
+│   └── evals/rubric.md       Scoring rubric (locked)
 └── rethink/
-    ├── SKILL.md              复盘 → Patch → 候选版本 → 评估 → 下一轮
-    ├── references/review.md  复盘清单 · 经验写法 · Patch 格式 · 防过拟合
-    └── templates/            复盘报告
+    ├── SKILL.md              Review → Patch → candidate version → evaluate → next round
+    ├── references/review.md  Review checklist · lesson format · Patch format · anti-overfitting
+    └── templates/            Review report
 ```
 
-## 评估方式
+## Evaluation
 
-泛用框架没有固定考卷，改为两条路：
+A general-purpose framework has no fixed exam, so there are two routes:
 
-- **考题库**：每次 /rethink 用选择题问是否把本轮任务收入题库，题库随真实使用长出来（最多 10 道）
-- **外部复核**：`rsi_state.py export` 生成复核包，复制给其他 AI 检查后贴回；外部意见逐条核对，不直接照收。复核包不标注哪个方案来自用户，避免外部审稿人被带偏
+- **Question bank**: each `/rethink` asks (multiple choice) whether to add this round's task to the bank; the bank grows from real use (max 10)
+- **External review**: `rsi_state.py export` produces a review packet to paste into another AI; its feedback is checked item by item, never accepted wholesale. The packet does not reveal which plan came from the user, so the reviewer is not biased
 
-## 路线图
+## Roadmap
 
-- [x] v2.2 个人版：考题库边用边收；外部 AI 复核
-- [ ] 公司版：独立 agent 做客观验证；分级放权；无人值守循环与漂移警报
+- [x] v2.3 English edition; replies follow the user's language
+- [x] v2.2 Personal edition: question bank grows with use; external AI review
+- [ ] Company edition: independent verifier agent; tiered autonomy; unattended loop with drift alerts
 
-## 安装
+## Install
 
-**claude.ai（需电脑端）**：Settings → Capabilities → Skills，分别上传 `rsi.zip` 与 `rethink.zip`。
+**claude.ai (web)**: go to claude.ai/customize/skills → **+** → **Create skill** → **Upload a skill**, and upload `rsi.zip` and `rethink.zip` separately. Requires *Code execution and file creation* to be enabled.
 
-**Claude Code**：`cp -r skills/rsi skills/rethink ~/.claude/skills/`
+**Claude Code**: `cp -r skills/rsi skills/rethink ~/.claude/skills/`
 
-依赖：`divide-into-several-pieces`（方案拆解）、Python 3.8+（无第三方库）。
+Dependencies: the `divide-into-several-pieces` skill (optional; built-in rules are used if absent), Python 3.8+ (standard library only).
 
 ## License
 

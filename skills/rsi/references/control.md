@@ -1,55 +1,54 @@
-# 控制
+# Control
 
-## §1 边干活边提问
+## §1 Ask while working
 
-**任何步骤**遇到不懂、看不清、有歧义的地方，当场停下用选择题问，答完接着往下跑，不等到最后：
+At **any step**, when something is unclear, unreadable or ambiguous, stop and ask with a multiple-choice question, then continue. Do not save questions for the end:
 
-| 什么时候问 | 例子 |
+| When to ask | Example |
 |---|---|
-| 用户意思有两种以上理解，且会导向不同结果 | "新买家"指新国家的买家，还是新类型的买家？ |
-| 缺的信息会改变方案或评分 | 预算上限、时间期限、能不能对外合作 |
-| 两个方案并列，取舍取决于用户价值判断 | 更快见效 vs 更低成本 |
-| 查证结果和用户陈述冲突 | 用户说的数据与来源不一致 |
+| The user's words have two or more readings that lead to different results | "New buyers": new countries, or new buyer types? |
+| Missing information would change a plan or a score | Budget cap, deadline, whether outside partners are allowed |
+| Two plans tie and the choice depends on the user's values | Faster results vs lower cost |
+| Verified information conflicts with what the user said | The user's figure differs from the source |
 
-**不问的**：技术上能自行判断、换哪个答案结论都不变的小问题 → 标「假设」继续，并在汇总里写明。
+**Do not ask** when you can decide technically and the answer would not change the conclusion → tag *assumption*, continue, and state it in the summary.
 
-提问格式：
-- 用 AskUserQuestion，每次 1–2 个问题，每题 2–4 个选项，推荐项放第一并标"（推荐）"，每个选项一句话说明后果；用户始终可以自己输入
-- 不可用时用文字列 1、2、3
-- 问完不重复上一步已输出的内容，直接从停下的地方继续
-- 用户的回答按原话记为「事实」或「偏好」，不借此改写任务定义或评分标准（中立性）
+Format:
+- Use AskUserQuestion: 1–2 questions at a time, 2–4 options each, recommended option first and marked "(Recommended)", one line per option on its consequence; the user can always type their own answer
+- If unavailable, list numbered options 1, 2, 3 in text
+- After the answer, do not repeat earlier output; continue from where you stopped
+- Record the answer verbatim as *fact* or *preference*; never use it to rewrite the task definition or the scoring criteria (neutrality)
 
-**固定决策点**在综合之后，选项至少含：采用推荐 / 改用其他方案 / 方向不对重来（回到五分支）
-- 只有一条合理路线且无需用户取舍时，可直接给出解决方案，并注明"无需决策的原因"
+**Fixed decision point** after the Synthesis. Options must include at least: adopt the recommendation / choose another plan / wrong direction, start over (back to the five branches).
 
-## §2 /retry：目标不变，路径重算
+## §2 /retry: same goal, new path
 
-| 指令 | 重算范围 |
+| Command | Recomputed from |
 |---|---|
-| `/retry` | 最近一个汇总 |
-| `/retry 1` | 汇总 1 起，之后全部重走 |
-| `/retry 2` | 汇总 2 起（含实际例子），之后全部重走 |
+| `/retry` | The most recent summary |
+| `/retry 1` | Summary 1, everything after is redone |
+| `/retry 2` | Summary 2 (including examples), everything after is redone |
 
-1. 保留：根问题、成功标准、限制（除非用户说它们就是错的，此时用 `/retry 1`）
-2. 用户未给原因时，用选择题问：理解错了 / 方案不够好 / 遗漏条件 / 例子不贴切 / 验证不足
-3. 找出上一版失败点：哪个假设错、哪个方案被推翻、缺什么信息、哪个验证不够
-4. **至少改变一项**：方案、信息来源、拆解方式、验证方式、关键假设；禁止只改措辞
-5. 重算后的汇总开头加三行：
+1. Keep: task definition, success criteria, constraints (unless the user says they are wrong, in which case use `/retry 1`)
+2. If the user gave no reason, ask: misunderstood me / plans not good enough / missed a condition / examples not relevant / verification too weak
+3. Find where the previous version failed: which assumption was wrong, which plan was overturned, what information was missing, which verification was weak
+4. **Change at least one**: plan, information source, decomposition, verification method, key assumption. Rewording alone is forbidden
+5. Start the recomputed summary with three lines:
    ```
-   Retry 原因：…
-   上一版失败点：…
-   本次改变：…
+   Retry reason: …
+   Previous failure point: …
+   What changed: …
    ```
-6. 记录：`rsi_state.py retry <汇总> "<原因>"`
+6. Record: `rsi_state.py retry <summary> "<reason>"`
 
-## §3 停止条件
+## §3 Stop conditions
 
-任一成立即停止扩展，直接进入解决方案或提示用户：
+If any holds, stop expanding and go to the Solution or tell the user:
 
-- 已满足成功标准
-- 新一轮没有实质新增信息
-- 验证成本明显高于潜在收益
-- 剩余不确定性只能靠现实行动或他人表态解决
-- 连续两次 /retry 结论高度相似 → 提示"已接近收敛"
-- 同一汇总 /retry 超过 3 次 → 建议 `/retry 1` 重新定义问题
-- 嵌套超过 3 层 → 强制回流
+- The success criteria are met
+- A new round adds no substantive information
+- Verification costs clearly exceed the potential benefit
+- The remaining uncertainty can only be resolved by real-world action or other people
+- Two consecutive /retry results are highly similar → say "this is close to converging"
+- The same summary retried more than 3 times → suggest `/retry 1` to redefine the problem
+- Nesting deeper than 3 levels → force it back up

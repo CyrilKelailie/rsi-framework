@@ -1,18 +1,18 @@
-## ⑤ 解决方案｜R{轮次}
+## ⑤ Solution | R{round}
 
-**最终方案**：{方案}，因为 {依据编号}
-{若用户选择了非推荐方案：注明"按用户偏好选择；推荐方案为 X"}
+**Final plan**: {plan}, because {supporting IDs}
+{If the user chose a non-recommended plan: "Chosen by user preference; the recommendation was X"}
 
-**执行顺序**
-1. {本周可做的第一步}
+**Execution order**
+1. {first step, doable this week}
 2. {…}
 
-**所需资源**：{…}
-**风险控制**：{风险 → 应对}
-**验证方法**：{怎么知道它在起作用；可参考 E 编号的结果作基准}
-**完成标准**：{照抄成功标准}
+**Resources needed**: {…}
+**Risk control**: {risk → response}
+**How to verify it works**: {…; E-case results can serve as a benchmark}
+**Done when**: {copied from success criteria}
 
-**未确认的点**：{…}
+**Unconfirmed points**: {…}
 
 ---
-本轮结束。输入 /rethink 可复盘并开启下一轮。
+Round complete. Type /rethink to review and start the next round.

@@ -1,88 +1,88 @@
-# 方法
+# Method
 
-## 通用：信息标签与证据等级
+## General: information tags and evidence levels
 
-每条信息打一个标签，不得把「假设」自动升级为「事实」：
+Tag every piece of information. Never silently promote an *assumption* to a *fact*:
 
-| 标签 | 含义 |
+| Tag | Meaning |
 |---|---|
-| 事实 | 已确认，有来源或用户明确陈述的客观情况 |
-| 假设 | 暂时当作成立，需要验证 |
-| 未知 | 目前不知道，且会影响结论 |
-| 推断 | 由事实和证据推出的判断 |
-| 偏好 | 用户的倾向；只影响选择，不影响评分 |
+| fact | Confirmed: has a source, or an objective situation the user stated clearly |
+| assumption | Treated as true for now; needs verification |
+| unknown | Not known yet, and it affects the conclusion |
+| inference | A judgment derived from facts and evidence |
+| preference | The user's inclination; affects the choice, never the scores |
 
-每个关键结论标证据等级，尽量用高等级：
+Give every key conclusion an evidence level, as high as possible:
 
-| 等级 | 方式 | 例子 |
+| Level | Method | Examples |
 |---|---|---|
-| L4 | 测算 / 运行 | 计算、代码、测试、模拟 |
-| L3 | 外部证据 | 官方文档、可靠数据、多个独立来源 |
-| L2 | 结构化评估 | 按评分表逐项评价 |
-| L1 | 模型自查 | 推理自洽检查 |
-| L0 | 直觉 | "感觉可以" |
+| L4 | Computed / executed | calculation, code, tests, simulation |
+| L3 | External evidence | official docs, reliable data, several independent sources |
+| L2 | Structured evaluation | item-by-item rubric assessment |
+| L1 | Model self-check | internal consistency check |
+| L0 | Intuition | "feels right" |
 
-L0、L1 不能写成确定结论；解决方案所依赖的关键结论至少要 L2。
+L0 and L1 must never be written as firm conclusions. Key conclusions the Solution depends on need at least L2.
 
-## §1 五分支拆解
+## §1 Five branches
 
-五条分支各自独立思考，互不参考：
+Each branch is reasoned independently, without looking at the others:
 
-| 编号 | 分支 | 回答 |
+| ID | Branch | Answers |
 |---|---|---|
-| G | 目的 | 用户真正想得到什么？表面诉求和真实意图分开 |
-| F | 第一性原理 | 不可再拆的基本事实或机制是什么（2–4 条）？哪个惯常假设站不住？ |
-| L | 限制 | 时间、成本、权限、技术、法律、用户明确禁止的事 |
-| S | 成功标准 | 做到什么算完成，写成可判断的条件 |
-| R | 可用资源 | 确实可用的信息、文件、工具、渠道、人、钱 |
+| G | Purpose | What does the user really want? Separate the stated request from the real intent |
+| F | First principles | What are the irreducible facts or mechanisms (2–4)? Which conventional assumption does not hold? |
+| L | Constraints | Time, cost, permissions, technology, law, anything the user explicitly forbids |
+| S | Success criteria | What counts as done, written as a checkable condition |
+| R | Resources | What is actually available: information, files, tools, channels, people, money |
 
-未知项会彻底改变方案 → 用选择题问；影响小 → 标「假设」继续。
+An unknown that would change the plan completely → ask with a multiple-choice question. Minor → tag *assumption* and continue.
 
-## §2 生成方案
+## §2 Generating plans
 
-- Plan A/B/C 必须在**机制**上不同：技术路线、决策逻辑、成本结构、风险结构至少一项不同
-- 禁止：A = 做 X，B = 更仔细地做 X，C = 更全面地做 X
-- 用户提出的做法最多占一个 Plan，至少一个 Plan 不用它
-- 只有一条合理路线时可以少于三个，但要在汇总 2 说明原因
-- 每个 Plan 用 divide-into-several-pieces 拆成子问题，逐项检查：是否成立、前置条件、失败条件、能否验证。不能因为整体听起来合理就默认每一步成立
+- Plans A/B/C must differ in **mechanism**: at least one of technical route, decision logic, cost structure or risk structure
+- Forbidden: A = do X, B = do X more carefully, C = do X more thoroughly
+- The user's proposed approach may occupy at most one plan; at least one plan must not use it
+- If only one reasonable route exists, fewer than three is fine, but explain why in Summary 2
+- Break each plan into sub-problems with divide-into-several-pieces (or the same logic if that skill is absent) and check each: does it hold, preconditions, failure conditions, can it be verified. A plan that sounds reasonable overall does not mean every step holds
 
-## §3 钢人反驳（编号 X）
+## §3 Steelman rebuttal (ID X)
 
-对每个 Plan 的**最强版本**找：
+Against the **strongest version** of each plan, find:
 
-1. 最强反例
-2. 最容易失败的环节
-3. 隐藏假设
-4. 被忽略的成本
-5. 有没有更简单的做法
-6. 是否"看起来聪明但没用"
-7. 是否偏离根问题
+1. The strongest counterexample
+2. The step most likely to fail
+3. Hidden assumptions
+4. Overlooked costs
+5. A simpler way to achieve the same thing
+6. Whether it is "clever-looking but useless"
+7. Whether it drifts from the task definition
 
-对所有 Plan 同等力度，不因用户偏好或第一印象减弱。
+Apply equal force to every plan, regardless of user preference or first impressions.
 
-## §4 评分（反驳和验证之后）
+## §4 Scoring (after rebuttal and verification)
 
-维度在生成方案**之前**固定，各 1–5 分，满分 25：
+Dimensions are fixed **before** plans are generated; 1–5 each, 25 max:
 
-| 维度 | 1 分 | 5 分 |
+| Dimension | 1 | 5 |
 |---|---|---|
-| 契合 | 偏离目的 | 直接满足成功标准 |
-| 落地 | 依赖不具备的条件 | 现有资源本周可启动 |
-| 成本 | 远超限制 | 明显低于限制 |
-| 速度 | 一年以上见效 | 数周内可验证 |
-| 抗风险 | 反驳后有致命问题 | 反驳点都有应对 |
+| Fit | Drifts from the purpose | Directly meets the success criteria |
+| Feasibility | Depends on conditions not available | Can start this week with current resources |
+| Cost | Far exceeds the constraints | Clearly below the constraints |
+| Speed | More than a year to show results | Verifiable within weeks |
+| Resilience | A fatal issue remains after rebuttal | Every rebuttal point has a response |
 
-- 不可行的方案总分上限 10
-- 每个 Plan 一句话描述（≤25 字）：做什么 + 靠什么赢
-- 相差 ≤2 分视为并列
-- 用户选了低分方案：记录为「偏好」，不回头改分
+- An infeasible plan scores at most 10
+- One-line description per plan (≤ 15 words): what it does + why it wins
+- A difference of ≤ 2 points counts as a tie
+- If the user picks a lower-scoring plan: record it as a *preference*; do not go back and change scores
 
-## §5 实际例子（编号 E）
+## §5 Real-world examples (ID E)
 
-目的：用现实校正推理，不是装饰。
+Purpose: let reality correct the reasoning, not decorate the answer.
 
-- 必须联网查证，每个案例附可点开的来源链接；查不到不输出，不编造
-- 顺序：同行业同规模 → 同行业不同规模 → 跨行业同类问题；失败案例同样有效
-- 每个案例写：谁（规模）、做了什么、结果、可借鉴 / 不适用、来源
-- 某方案无案例：写"无先例（已搜索 X）"，并在综合中列为不确定性
-- 用自己的话概括，引用原文不超过一句
+- Must be verified online; each case needs a clickable source link. If none can be found, do not output it and never invent one
+- Search order: same industry and scale → same industry, different scale → different industry, same problem. Failure cases count too
+- For each case: who (scale), what they did, result, what transfers / what does not, source
+- A plan with no cases: write "no precedent (searched: …)" and list it as an uncertainty in the Synthesis
+- Summarize in your own words; quote at most one sentence of the source

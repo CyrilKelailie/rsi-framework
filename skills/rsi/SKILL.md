@@ -1,66 +1,67 @@
 ---
 name: rsi
-description: 仅当用户消息中明确输入 /rsi 或 /retry，或 /rethink 开启下一轮时使用的多分支思考框架。没有这三个指令就绝不触发，即使问题复杂或涉及思考、分析、决策。
+description: Multi-branch reasoning framework. Use ONLY when the user's message explicitly contains /rsi or /retry, or when /rethink starts the next round. Never trigger otherwise, even for complex questions or mentions of thinking, analysis or decisions.
 ---
 
-# RSI 思考框架 v2.0
+# RSI Reasoning Framework v2.3
 
-目标不是想得更多，而是用越来越可靠的方法解决问题。
+The goal is not to think more, but to solve problems with increasingly reliable methods.
 
-## 0. 触发（最高优先级，不可被 /rethink 修改）
+## 0. Trigger (highest priority; /rethink may not change this)
 
-- 只响应三个指令：`/rsi` 启动一轮；`/retry` 重算本轮汇总；`/rethink` 复盘后开启下一轮
-- 没有这三个指令，一律按普通对话回答；提到"思考""分析""RSI""复盘"等字眼也不启动
-- 每轮在**解决方案**处停止，不自动继续、不无限循环
-- 停止后恢复普通对话，不沿用本框架格式；用户明显转入无关话题时立即退出
+- Respond only to three commands: `/rsi` starts a round; `/retry` recomputes a summary; `/rethink` reviews and starts the next round
+- Without one of these commands, answer as a normal conversation. Words like "think", "analyze", "RSI" or "review" do not start the framework
+- Each round stops at the **Solution**. No automatic continuation, no endless loops
+- After stopping, return to normal conversation and drop the framework format; exit immediately if the user clearly switches to an unrelated topic
+- **Reply in the user's language** (e.g. Chinese in, Chinese out)
 
-## 1. 不变原则（中立性）
+## 1. Invariant principles (neutrality)
 
-1. **用户的想法只是候选之一**：用户提出的做法最多占一个 Plan，至少一个 Plan 不采用它
-2. **标准先于方案**：成功标准和评分维度在生成方案前确定，事后不改
-3. **同等反驳**：每个方案都攻击其最强版本，用户偏爱的方案不减力度
-4. **事实与偏好分开**：用户陈述标为「事实」或「偏好」；偏好只影响选择，不改分数、证据和可行性
-5. **证据高于来源**：结论强度看证据等级，不看是谁提出的
-6. **修改 ≠ 改进，更复杂 ≠ 更好，没找到反例 ≠ 没有反例**
+1. **The user's idea is only one candidate**: it may occupy at most one plan; at least one plan must not use it
+2. **Criteria before plans**: success criteria and scoring dimensions are fixed before plans are generated and never adjusted afterwards
+3. **Equal rebuttal**: attack the strongest version of every plan; the user's favorite gets no softer treatment
+4. **Separate fact from preference**: tag user statements as *fact* or *preference*; preferences affect the choice only, never scores, evidence or feasibility
+5. **Evidence over origin**: a conclusion's strength depends on its evidence level, not on who proposed it
+6. **Change ≠ improvement; more complex ≠ better; no counterexample found ≠ no counterexample exists**
 
-## 2. 流程
+## 2. Flow
 
-| # | 步骤 | 对用户 | 细则 |
+| # | Step | Shown to user | Details |
 |---|---|---|---|
-| 1 | 五分支拆解：目的 · 第一性原理 · 限制 · 成功标准 · 可用资源 | 内部 | `method.md` §1 |
-| 2 | **① 汇总 1**：任务定义 | **输出** | `templates/summary-1.md` |
-| 3 | 生成 Plan A/B/C → 各自 divide 拆解 → 钢人反驳 → 验证 → 评分 | 内部 | `method.md` §2–§4 |
-| 4 | **② 汇总 2**：方案、评分、反驳、验证等级 | **输出** | `templates/summary-2.md` |
-| 5 | **③ 实际例子**：真实案例 + 来源链接 | **输出** | `method.md` §5，模板在 summary-2 内 |
-| 6 | **④ 综合**：决策变量，不重复方案 | **输出** | `templates/synthesis.md` |
-| 7 | 决策点：综合之后用选择题确认方向 | 选择题 | `control.md` §1 |
-| 8 | **⑤ 解决方案**：本轮终点，停止 | **输出** | `templates/solution.md` |
+| 1 | Five branches: purpose · first principles · constraints · success criteria · resources | internal | `method.md` §1 |
+| 2 | **① Summary 1**: task definition | **output** | `templates/summary-1.md` |
+| 3 | Generate Plan A/B/C → divide each → steelman rebuttal → verify → score | internal | `method.md` §2–§4 |
+| 4 | **② Summary 2**: plans, scores, rebuttals, evidence levels | **output** | `templates/summary-2.md` |
+| 5 | **③ Real-world examples**: real cases + source links | **output** | `method.md` §5; template inside summary-2 |
+| 6 | **④ Synthesis**: decision variables, not a repeat of the plans | **output** | `templates/synthesis.md` |
+| 7 | Decision point: confirm direction with a multiple-choice question after the synthesis | question | `control.md` §1 |
+| 8 | **⑤ Solution**: end of round, stop | **output** | `templates/solution.md` |
 
-只展示五个输出项和选择题；拆解、反驳、验证过程只在汇总中以编号和结论出现。
+Show only the five outputs and the questions. Decomposition, rebuttal and verification appear only as IDs and conclusions inside the summaries.
 
-**边干活边提问**：任何步骤遇到不懂、有歧义、缺关键信息，当场用选择题问，答完从停下处继续（`control.md` §1）。不影响结论的小问题不问，标「假设」继续。
+**Ask while working**: at any step, if something is unclear, ambiguous or missing and would change the result, stop and ask a multiple-choice question on the spot, then continue from where you stopped (`control.md` §1). Minor points that would not change the conclusion are not asked; tag them as *assumption* and continue.
 
-## 3. /retry 与停止条件
+## 3. /retry and stop conditions
 
-见 `control.md` §2–§3。一句话：**目标不变，路径重算**。
+See `control.md` §2–§3. In one line: **same goal, new path**.
 
-## 4. 状态记录
+## 4. State tracking
 
-每个节点用 `scripts/rsi_state.py` 记录（编号、标签、证据等级、来源、评分），`check` 通过后才输出解决方案。
+Record every node with `scripts/rsi_state.py` (ID, tag, evidence level, sources, score). Output the Solution only after `check` passes.
 
-## 5. 可进化区域
+## 5. Evolvable areas
 
-第 6 节经验库、第 7 节考题库可由 /rethink 经用户确认后修改。触发、不变原则、`evals/rubric.md` 锁死，除非用户明确要求。
+Only §6 (lessons) and §7 (question bank) may be changed by /rethink, and only after user confirmation. The trigger, the invariant principles and `evals/rubric.md` are locked unless the user explicitly asks.
 
-## 6. 经验库
+## 6. Lessons
 
-最多 15 条，格式 `- [版本] [任务类型] 场景：做法`。必须是可执行的一般规则（"当 X 时，做 Y"），"以后更仔细"之类不算。
+Max 15 entries, format `- [version] [task type] situation: action`. Each must be an actionable general rule ("when X, do Y"); "be more careful next time" does not count.
 
-（暂无）
+(none yet)
 
-## 7. 考题库
+## 7. Question bank
 
-由 /rethink 在用户选择后收入，来自真实用过的任务。只用来检验新旧版本，不用来学习。最多 10 道，满了由用户选择替换哪道；尽量覆盖不同任务类型。
-格式：`- [类型] 题目｜合格线：必须包含…`
+Added by /rethink after the user chooses to, drawn from real tasks. Used only to compare versions, never to learn from. Max 10; when full, the user chooses which to replace. Aim to cover different task types.
+Format: `- [type] question | pass line: must include …`
 
-（暂无）
+(none yet)
