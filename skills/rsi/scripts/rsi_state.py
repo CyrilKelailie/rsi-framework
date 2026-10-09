@@ -217,7 +217,7 @@ def cmd_check(_):
         if v["type"] in {"summary", "synthesis", "solution"} and not v["sources"]:
             p.append(f"{k} cites no source IDs")
         if v["type"] == "solution":
-            weak = [x for x in v["sources"] if nodes[x]["level"] in {"L0", "L1"}]
+            weak = [x for x in v["sources"] if nodes[x].get("level") not in {"L2", "L3", "L4"}]
             if weak:
                 p.append(f"Solution relies on low-evidence conclusions: {', '.join(weak)} (needs >= L2)")
             if any(nodes[x]["tag"] == "assumption" for x in v["sources"]):
@@ -239,6 +239,8 @@ def cmd_check(_):
         if c > MAX_RETRY:
             p.append(f"{t} retried {c} times; suggest redefining the problem")
     print("✅ Check passed" if not p else "\n".join("⚠️ " + x for x in p))
+    if p:
+        sys.exit(1)
 
 
 def main():
